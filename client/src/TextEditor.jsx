@@ -74,6 +74,17 @@ function TextEditor() {
     socket.emit("get-document", documentId); //sending to server id
   }, [socket, quill, documentId]);
 
+  //get the saved doc once things are written on it in every time interval
+  useEffect(() => {
+    if (socket == null || quill == null) return;
+
+    const interval = setInterval(() => {
+      socket.emit("save-document", quill.getContents());
+    }, 2000);
+
+    return () => clearInterval(interval);
+  }, [socket, quill]);
+
   const wrapperRef = useCallback((wrapper) => {
     if (wrapper === null) return;
 
